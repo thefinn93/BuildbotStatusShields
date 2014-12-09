@@ -14,7 +14,8 @@ form at `/png` from the WebStatus server. However, they look pretty ugly and
 there isn't any configuration available. So I made this here thing to allow
 expanded use of the status shield/badge/thing. The include badges look like:
 
-[Build Status](examples/success.svg)
+![Build Status](examples/success.svg)
+![Build Statue](examples/failure.svg)
 
 ## Usage
 
