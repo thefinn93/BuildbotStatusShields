@@ -24,7 +24,7 @@ from twisted.web import resource
 from buildbot.status import results
 
 import cairocffi as cairo
-from Jinja2 import Template  # For now, might not use this
+from jinja2 import Template  # For now, might not use this
 
 
 class ShieldStatusResource(resource.Resource):
@@ -83,8 +83,8 @@ class ShieldStatusResource(resource.Resource):
 
         data = {'filename': 'status.%s' % filetype,
                 'image': None,
-                'content_type': mimetypes[filetype]
-                }
+                'content_type': mimetypes[filetype]}
+
         builder = request.args.get('builder', [None])[0]
 
         svgdata = self.makesvg("Error")
@@ -112,7 +112,7 @@ class ShieldStatusResource(resource.Resource):
 
     def makesvg(self, righttext, rightcolor, lefttext="Build Status",
                 leftcolor="#555", style="plastic"):
-        template = Template(open("templates/%s" % style).read()
+        template = Template(open("templates/%s" % style).read())
         left = {
             "color": leftcolor,
             "text": lefttext,

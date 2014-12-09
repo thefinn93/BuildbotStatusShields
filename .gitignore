@@ -2,6 +2,8 @@ bin/
 include/
 lib/
 local/
+build/
+test/
 
 *.pyc
 *.pyo
