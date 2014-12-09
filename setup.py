@@ -20,7 +20,7 @@ setup(
     author_email="finn@finn.io",
     description=("Adds shields.io-style badges to Buildbot 9"),
     license = "GPLv2",
-    keywords = "shields badges status buildbot",
+    keywords = "shields badges status Buildbot",
     url = "https://github.com/thefinn93/BuildbotStatusShields",
     packages=['BuildbotStatusShields'],
     long_description=readme('README.md'),
