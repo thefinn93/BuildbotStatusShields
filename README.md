@@ -1,13 +1,20 @@
 # BuildBot Status Shields
 
+[![PyPI](http://img.shields.io/pypi/v/BuildbotEightStatusShields.svg)](https://pypi.python.org/pypi/BuildbotEightStatusShields)
+[![PyPI](http://img.shields.io/pypi/l/BuildbotEightStatusShields.svg)](https://pypi.python.org/pypi/BuildbotEightStatusShields)
+[![Code Health](https://landscape.io/github/thefinn93/BuildbotStatusShields/eight/landscape.svg)](https://landscape.io/github/thefinn93/BuildbotStatusShields/eight)
+
 *For Buildbot Nine, see the nine branch or
 [BuildbotStatusShields](https://pypi.python.org/pypi/BuildbotStatusShields) on
 PyPI*
 
+
 [Buildbot](http://buildbot.org) version eight offers build status shields in PNG
 form at `/png` from the WebStatus server. However, they look pretty ugly and
 there isn't any configuration available. So I made this here thing to allow
-expanded use of the status shield/badge/thing.
+expanded use of the status shield/badge/thing. The include badges look like:
+
+[Build Status](examples/success.svg)
 
 ## Usage
 
@@ -22,6 +29,8 @@ import BuildbotStatusShields as shields
 
 c['status'].append(shields.bind(html.WebStatus(http_port=8010, authz=authz_cfg)))
 ```
+
+Now your badge is as `/badge.svg` and `/badge.png`.
 
 You can pass `bind()` options to change configuration settings. For example:
 ```python
