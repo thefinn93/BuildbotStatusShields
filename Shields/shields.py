@@ -114,7 +114,7 @@ class ShieldStatusResource(resource.Resource):
 
     def makesvg(self, righttext, rightcolor="#4c1", lefttext="Build Status",
                 leftcolor="#555", style="plastic"):
-        template = Template(open("/home/finn/gitshit/pyshields/templates/%s-template.svg" % style).read())
+        template = Template(open("templates/%s-template.svg" % style).read())
         left = {
             "color": leftcolor,
             "text": lefttext,
