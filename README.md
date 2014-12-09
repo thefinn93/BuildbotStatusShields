@@ -5,18 +5,6 @@
 any configuration available. So I made this here thing to allow expanded use of
 the status shield/badge/thing.
 
-## Installation
-
-```bash
-$ pip install buildbotstatusshields
-```
-
-or from this directory
-
-```bash
-$ python setup.py install
-```
-
 ## Usage
 
 *Note: This whole `bind()` thing feels wrong, I just haven't worked out how to
@@ -65,4 +53,4 @@ forget to update. Check `shields.py` for the full list:
 You can also customize the badge. Simply place an SVG Jinja2 template at
 `templates/badge.svg.j2` in the buildbot master folder. Several examples from
 [shields.io](http://shields.io) can be found in the `templates/` folder of this
-package. 
+package.
