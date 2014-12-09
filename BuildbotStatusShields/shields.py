@@ -27,7 +27,7 @@ from buildbot.status import results
 
 import cairocffi as cairo
 import cairosvg
-from jinja2 import Template  # For now, might not use this
+import jinja2
 
 
 class ShieldStatusResource(resource.Resource):
@@ -39,7 +39,7 @@ class ShieldStatusResource(resource.Resource):
 
     leftText = None
     leftColor = None
-    templatePath = None
+    templateName = None
     fontFace = None
     fontSize = None
     colorScheme = {
@@ -52,13 +52,18 @@ class ShieldStatusResource(resource.Resource):
         "warnings": "#dfb317"    # yellow
     }
 
+    env = jinja2.Environment(loader=jinja2.ChoiceLoader([
+        jinja2.PackageLoader('BuildbotStatusShields'),
+        jinja2.FileSystemLoader('templates')
+        ]))
+
     def __init__(self, webstatus, leftText="Build Status", leftColor="#555",
-                 templatePath="templates/badge.svg.j2", fontFace="DejaVu Sans",
+                 templateName="badge.svg.j2", fontFace="DejaVu Sans",
                  fontSize=11, colorScheme=colorScheme):
         self.webstatus = webstatus
         self.leftText = leftText
         self.leftColor = leftColor
-        self.templatePath = templatePath
+        self.templateName = templateName
         self.fontFace = fontFace
         self.fontSize = fontSize
         self.colorScheme = colorScheme
@@ -151,7 +156,6 @@ class ShieldStatusResource(resource.Resource):
         if leftColor is None:
             leftColor = self.leftColor
 
-        template = Template(open(self.templatePath).read())
         left = {
             "color": leftColor,
             "text": leftText,
@@ -162,4 +166,6 @@ class ShieldStatusResource(resource.Resource):
             "text": righttext,
             "width": self.textwidth(righttext)
         }
+
+        template = self.env.get_template(self.templateName)
         return template.render(left=left, right=right)

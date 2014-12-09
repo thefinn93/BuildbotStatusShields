@@ -13,14 +13,14 @@ colors = {
 
 
 def bind(webstatus, path="badge", leftText="Build Status", leftColor="#555",
-         templatePath="templates/badge.svg.j2", fontFace="DejaVu Sans",
+         templateName="badge.svg.j2", fontFace="DejaVu Sans",
          fontSize=11, colorScheme=colors):
     for filetype in ["png", "svg"]:
         webstatus.putChild("%s.%s" % (path, filetype),
                            ShieldStatusResource(webstatus,
                                                 leftText=leftText,
                                                 leftColor=leftColor,
-                                                templatePath=templatePath,
+                                                templateName=templateName,
                                                 fontFace=fontFace,
                                                 fontSize=fontSize,
                                                 colorScheme=colorScheme))

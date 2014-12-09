@@ -18,6 +18,10 @@ $ python setup.py install
 ```
 
 ## Usage
+
+*Note: This whole `bind()` thing feels wrong, I just haven't worked out how to
+do it right. Please drop me a note if you wish to enlighten me*
+
 In your `master.cfg` file, use `BuildbotStatusShields.bind(WebStatus)` to bind
 to the WebStatus server:
 
@@ -26,10 +30,6 @@ import BuildbotStatusShields as shields
 
 c['status'].append(shields.bind(html.WebStatus(http_port=8010, authz=authz_cfg)))
 ```
-
-Then place a template for the shield you want at `templates/badge.svg.j2`. Some
-examples (from [shields.io](http://shields.io)) can be found in the templates
-folder of this repository.
 
 You can pass `bind()` options to change configuration settings. For example:
 ```python
@@ -57,7 +57,12 @@ forget to update. Check `shields.py` for the full list:
 * `path` - path to bind to. Defaults to `badge` (binds to `/badge.png` and `/badge.svg`)
 * `leftText` - the text on the left of the badge. Defaults to "Build Status"
 * `leftColor` - the color of the left side of the badge. Defaults to `#555`
-* `templatePath` - The path to the badge template. Defaults to `templates/badge.svg.j2`
+* `templateName` - The name to the badge template. Defaults to `badge.svg.j2`
 * `fontFace` - The font face to use when rendering the badge. Defaults to `DejaVu Sans`
 * `fontSize` - fontsize to use, defaults to 11
 * `colorScheme` - a dict of colors to use based on the status. See `__init__.py` for defaults
+
+You can also customize the badge. Simply place an SVG Jinja2 template at
+`templates/badge.svg.j2` in the buildbot master folder. Several examples from
+[shields.io](http://shields.io) can be found in the `templates/` folder of this
+package. 
