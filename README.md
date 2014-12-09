@@ -41,6 +41,15 @@ c['status'].append(shields.bind(html.WebStatus(http_port=8010, authz=authz_cfg),
 Will make it bind to `/shield.png` and `/shield.svg`. See below for all
 configuration options.
 
+
+When it is configured, run the buildbot master. Badges will be available at
+`/badge.svg` and `/badge.png` (by default), and can be passed the following
+parameters:
+
+* `builder` (required) - The name of the builder to return the status of
+* `number` (optional) - The build number to return the status of. `-1` (default)
+returns the most build
+
 ## Configuration
 There are several options available, here's a quick list that I'll probably
 forget to update. Check `shields.py` for the full list:
