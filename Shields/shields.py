@@ -24,6 +24,7 @@ from twisted.web import resource
 from buildbot.status import results
 
 import cairocffi as cairo
+import cairosvg
 from jinja2 import Template  # For now, might not use this
 
 
@@ -32,10 +33,10 @@ class ShieldStatusResource(resource.Resource):
     """
 
     isLeaf = True
-    status = None
+    webstatus = None
 
-    def __init__(self, status):
-        self.status = status
+    def __init__(self, webstatus):
+        self.webstatus = webstatus
 
     def getChild(self, name, request):
         """Just return itself
@@ -44,7 +45,7 @@ class ShieldStatusResource(resource.Resource):
 
     def render(self, request):
         """
-        Renders a given build status as PNG file
+        Renders a given build status
 
         We don't care about pre or post paths here so we skip them, we only
         care about parameters passed in the URL, those are:
@@ -70,6 +71,7 @@ class ShieldStatusResource(resource.Resource):
         # if size not in ('small', 'normal', 'large'):
         #     size = 'normal'
 
+        status = self.webstatus.getStatus()
         # build number
         b = int(request.args.get('number', [-1])[0])
 
@@ -88,31 +90,31 @@ class ShieldStatusResource(resource.Resource):
         builder = request.args.get('builder', [None])[0]
 
         svgdata = self.makesvg("Error")
-        if builder is not None and builder in self.status.getBuilderNames():
+        if builder is not None and builder in status.getBuilderNames():
             # get the last build result from this builder
-            build = self.status.getBuilder(builder).getBuild(b)
+            build = status.getBuilder(builder).getBuild(b)
             if build is not None:
                 result = build.getResults()
                 svgdata = self.makesvg(results.Results[result])
 
-        data['image'] = svgdata
-        if filetype is not "svg":
+        data['image'] = str(svgdata)
+        if filetype == "png":
             data['image'] = cairosvg.svg2png(svgdata)
 
         return data
 
     def textwidth(self, text, fontsize=14):
-        surface = cairo.SVGSurface('undefined.svg', 1280, 200)
+        surface = cairo.SVGSurface(None, 1280, 200)
         cr = cairo.Context(surface)
-        cr.select_font_face('Arial',
+        cr.select_font_face('DejaVu Sans',
                             cairo.FONT_SLANT_NORMAL,
                             cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(fontsize)
         return cr.text_extents(text)[2]
 
-    def makesvg(self, righttext, rightcolor, lefttext="Build Status",
+    def makesvg(self, righttext, rightcolor="#4c1", lefttext="Build Status",
                 leftcolor="#555", style="plastic"):
-        template = Template(open("templates/%s" % style).read())
+        template = Template(open("/home/finn/gitshit/pyshields/templates/%s-template.svg" % style).read())
         left = {
             "color": leftcolor,
             "text": lefttext,
