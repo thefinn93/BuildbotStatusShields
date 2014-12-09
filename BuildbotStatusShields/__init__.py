@@ -1,27 +1,27 @@
 #!/usr/bin/env python
-from shields import *
-
-colors = {
-    "exception": "#007ec6",  # blue
-    "failure": "#e05d44",    # red
-    "retry": "#007ec6",      # blue
-    "skipped": "a4a61d",     # yellowgreen
-    "success": "#4c1",       # brightgreen
-    "unknown": "#9f9f9f",    # lightgrey
-    "warnings": "#dfb317"    # yellow
-}
+"""Displays the status of the build using these hip new shields everyone uses
+"""
+from shields import ShieldStatusResource
 
 
-def bind(webstatus, path="badge", leftText="Build Status", leftColor="#555",
-         templateName="badge.svg.j2", fontFace="DejaVu Sans",
-         fontSize=11, colorScheme=colors):
+def bind(webstatus, path="badge", left_text=None, left_color=None,
+         template=None, font_face=None, font_size=None, color_scheme=None):
+    """Installs the ShieldStatusResource in the given WebStatus instance
+    """
+    left_text = left_text or ShieldStatusResource.defaults['leftText']
+    left_color = left_color or ShieldStatusResource.defaults['leftColor']
+    template_name = template or ShieldStatusResource.defaults['templateName']
+    font_face = font_face or ShieldStatusResource.defaults['fontFace']
+    font_size = font_size or ShieldStatusResource.defaults['fontSize']
+    color_scheme = color_scheme or ShieldStatusResource.defaults['colorScheme']
+
     for filetype in ["png", "svg"]:
         webstatus.putChild("%s.%s" % (path, filetype),
                            ShieldStatusResource(webstatus,
-                                                leftText=leftText,
-                                                leftColor=leftColor,
-                                                templateName=templateName,
-                                                fontFace=fontFace,
-                                                fontSize=fontSize,
-                                                colorScheme=colorScheme))
+                                                left_text=left_text,
+                                                left_color=left_color,
+                                                template_name=template_name,
+                                                font_face=font_face,
+                                                font_size=font_size,
+                                                color_scheme=color_scheme))
     return webstatus

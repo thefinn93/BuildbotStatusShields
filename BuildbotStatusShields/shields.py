@@ -19,8 +19,6 @@
 """Simple build status shields. Based heavily from buildbot's pngstatus.py
 """
 
-import os
-
 from twisted.web import resource
 
 from buildbot.status import results
@@ -37,36 +35,44 @@ class ShieldStatusResource(resource.Resource):
     isLeaf = True
     webstatus = None
 
+    defaults = {
+        "left_text": "Build Status",
+        "left_color": "#555",
+        "template_name": "badge.svg.s2",
+        "font_face": "DejaVu Sans",
+        "font_size": 11,
+        "color_scheme": {
+            "exception": "#007ec6",  # blue
+            "failure": "#e05d44",    # red
+            "retry": "#007ec6",      # blue
+            "skipped": "a4a61d",     # yellowgreen
+            "success": "#4c1",       # brightgreen
+            "unknown": "#9f9f9f",    # lightgrey
+            "warnings": "#dfb317"    # yellow
+        }
+    }
     leftText = None
     leftColor = None
     templateName = None
     fontFace = None
     fontSize = None
-    colorScheme = {
-        "exception": "#007ec6",  # blue
-        "failure": "#e05d44",    # red
-        "retry": "#007ec6",      # blue
-        "skipped": "a4a61d",     # yellowgreen
-        "success": "#4c1",       # brightgreen
-        "unknown": "#9f9f9f",    # lightgrey
-        "warnings": "#dfb317"    # yellow
-    }
+    colorScheme = defaults['colorScheme']
 
     env = jinja2.Environment(loader=jinja2.ChoiceLoader([
         jinja2.PackageLoader('BuildbotStatusShields'),
         jinja2.FileSystemLoader('templates')
         ]))
 
-    def __init__(self, webstatus, leftText="Build Status", leftColor="#555",
-                 templateName="badge.svg.j2", fontFace="DejaVu Sans",
-                 fontSize=11, colorScheme=colorScheme):
+    def __init__(self, webstatus, left_text=None, left_color=None,
+                 template_name=None, font_face=None, font_size=None,
+                 color_scheme=None):
         self.webstatus = webstatus
-        self.leftText = leftText
-        self.leftColor = leftColor
-        self.templateName = templateName
-        self.fontFace = fontFace
-        self.fontSize = fontSize
-        self.colorScheme = colorScheme
+        self.left_text = left_text or self.defaults['left_text']
+        self.left_color = left_color or self.defaults['left_color']
+        self.template_name = template_name or self.defaults['template_name']
+        self.font_face = font_face or self.defaults['font_face']
+        self.font_size = font_size or self.defaults['font_size']
+        self.color_scheme = color_scheme or self.defaults['color_scheme']
 
     def getChild(self, name, request):
         """Just return itself
@@ -102,7 +108,7 @@ class ShieldStatusResource(resource.Resource):
 
         status = self.webstatus.getStatus()
         # build number
-        b = int(request.args.get('number', [-1])[0])
+        build_number = int(request.args.get('number', [-1])[0])
 
         filetype = request.path.split(".")[-1].lower()
         mimetypes = {
@@ -118,18 +124,18 @@ class ShieldStatusResource(resource.Resource):
 
         builder = request.args.get('builder', [None])[0]
 
-        svgdata = self.makesvg("Unknown", leftText="Image Error")
+        svgdata = self.makesvg("Unknown", left_text="Image Error")
         if builder is not None and builder in status.getBuilderNames():
             # get the last build result from this builder
-            build = status.getBuilder(builder).getBuild(b)
+            build = status.getBuilder(builder).getBuild(build_number)
             if build is not None:
                 result = build.getResults()
                 svgdata = self.makesvg(results.Results[result],
                                        results.Results[result])
             else:
-                svgdata = self.makesvg("No builds", leftText="Image Error")
+                svgdata = self.makesvg("No builds", left_text="Image Error")
         else:
-            svgdata = self.makesvg("Invalid builder", leftText="Image Error")
+            svgdata = self.makesvg("Invalid builder", left_text="Image Error")
 
         data['image'] = str(svgdata)
         if filetype == "png":
@@ -138,34 +144,37 @@ class ShieldStatusResource(resource.Resource):
         return data
 
     def textwidth(self, text):
+        """Calculates the width of the specified text.
+        """
         surface = cairo.SVGSurface(None, 1280, 200)
-        cr = cairo.Context(surface)
-        cr.select_font_face(self.fontFace,
-                            cairo.FONT_SLANT_NORMAL,
-                            cairo.FONT_WEIGHT_BOLD)
-        cr.set_font_size(self.fontSize)
-        return cr.text_extents(text)[2]
+        ctx = cairo.Context(surface)
+        ctx.select_font_face(self.font_face,
+                             cairo.FONT_SLANT_NORMAL,
+                             cairo.FONT_WEIGHT_BOLD)
+        ctx.set_font_size(self.font_size)
+        return ctx.text_extents(text)[2]
 
-    def makesvg(self, righttext, status=None, leftText=None, leftColor=None):
-        rightColor = "#9f9f9f"  # Grey
-        if status in self.colorScheme:
-            rightColor = self.colorScheme[status]
+    def makesvg(self, right_text, status=None, left_text=None,
+                left_color=None):
+        """Renders an SVG from the template, using the specified data
+        """
+        right_color = "#9f9f9f"  # Grey
+        if status in self.color_scheme:
+            right_color = self.color_scheme[status]
 
-        if leftText is None:
-            leftText = self.leftText
-        if leftColor is None:
-            leftColor = self.leftColor
+        left_text = left_text or self.left_text
+        left_color = left_color or self.left_color
 
         left = {
-            "color": leftColor,
-            "text": leftText,
-            "width": self.textwidth(self.leftText)
+            "color": left_color,
+            "text": left_text,
+            "width": self.textwidth(left_text)
         }
         right = {
-            "color": rightColor,
-            "text": righttext,
-            "width": self.textwidth(righttext)
+            "color": right_color,
+            "text": right_text,
+            "width": self.textwidth(right_text)
         }
 
-        template = self.env.get_template(self.templateName)
+        template = self.env.get_template(self.template_name)
         return template.render(left=left, right=right)
