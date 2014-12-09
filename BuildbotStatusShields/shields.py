@@ -1,6 +1,7 @@
-# This file is part of Buildbot.  Buildbot is free software: you can
-# redistribute it and/or modify it under the terms of the GNU General Public
-# License as published by the Free Software Foundation, version 2.
+# This file is part of BuildbotStatusShields.  BuildbotStatusShields is free
+# software: you can redistribute it and/or modify it under the terms of the GNU
+# General Public License as published by the Free Software Foundation, version
+# 2.
 #
 # This program is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -13,8 +14,9 @@
 #
 # Copyright Buildbot Team Members
 # Copyright 2013 (c) Mamba Developers
+# Copyright 2014 (c) Finn Herzfeld
 
-"""Simple PNG build status banner
+"""Simple build status shields. Based heavily from buildbot's pngstatus.py
 """
 
 import os
@@ -74,8 +76,7 @@ class ShieldStatusResource(resource.Resource):
         care about parameters passed in the URL, those are:
 
         :param builder: the builder name
-        :param size: the size of the PNG than can be 'small', 'normal', 'large'
-        :returns: a binary PNG
+        :returns: either a binary PNG or an SVG, based on the requested path
         """
 
         data = self.content(request)
@@ -87,7 +88,7 @@ class ShieldStatusResource(resource.Resource):
         return data['image']
 
     def content(self, request):
-        """Renders the image shield
+        """Renders the shield image
         """
         # size not supported yet
         # size = request.args.get('size', ['normal'])[0]
