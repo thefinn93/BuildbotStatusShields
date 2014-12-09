@@ -7,3 +7,6 @@ test/
 
 *.pyc
 *.pyo
+
+*.egg-info
+dist/
