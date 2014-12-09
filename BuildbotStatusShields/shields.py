@@ -74,7 +74,7 @@ class ShieldStatusResource(resource.Resource):
         self.font_size = font_size or self.defaults['font_size']
         self.color_scheme = color_scheme or self.defaults['color_scheme']
 
-    def getChild(self, name, request):
+    def getChild(self, *_):
         """Just return itself
         """
         return self
