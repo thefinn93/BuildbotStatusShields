@@ -1,9 +1,13 @@
 # BuildBot Status Shields
 
-[Buildbot](http://buildbot.org) offers build status shields in PNG form at
-`/png` from the WebStatus server. However, they look pretty ugly and there isn't
-any configuration available. So I made this here thing to allow expanded use of
-the status shield/badge/thing.
+*For Buildbot Nine, see the nine branch or
+[BuildbotStatusShields](https://pypi.python.org/pypi/BuildbotStatusShields) on
+PyPI*
+
+[Buildbot](http://buildbot.org) version eight offers build status shields in PNG
+form at `/png` from the WebStatus server. However, they look pretty ugly and
+there isn't any configuration available. So I made this here thing to allow
+expanded use of the status shield/badge/thing.
 
 ## Usage
 

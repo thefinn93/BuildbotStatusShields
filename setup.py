@@ -14,13 +14,13 @@ def readme(fname):
     return output
 
 setup(
-    name="BuildbotStatusShields",
+    name="BuildbotEightStatusShields",
     version="0.1",
     author="Finn Herzfeld",
     author_email="finn@finn.io",
     description=("Adds shields.io-style badges to Buildbot"),
     license = "GPLv2",
-    keywords = "shields badges status buildbot",
+    keywords = "shields badges status Buildbot",
     url = "https://github.com/thefinn93/BuildbotStatusShields",
     packages=['BuildbotStatusShields'],
     long_description=readme('README.md'),
