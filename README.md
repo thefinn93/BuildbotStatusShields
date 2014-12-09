@@ -1,5 +1,9 @@
 # BuildBot Status Shields
 
+*This is for Buildbot nine, for the Buildbot eight version, see the eight branch
+or [BuildbotEightStatusShields](https://pypi.python.org/pypi/BuildbotEightStatusShields)
+on PyPI*
+
 [Buildbot](http://buildbot.org) offers build status shields in PNG form at
 `/png` from the WebStatus server. However, they look pretty ugly and there isn't
 any configuration available. So I made this here thing to allow expanded use of

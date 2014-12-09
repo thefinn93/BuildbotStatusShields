@@ -18,7 +18,7 @@ setup(
     version="0.1",
     author="Finn Herzfeld",
     author_email="finn@finn.io",
-    description=("Adds shields.io-style badges to Buildbot"),
+    description=("Adds shields.io-style badges to Buildbot 9"),
     license = "GPLv2",
     keywords = "shields badges status buildbot",
     url = "https://github.com/thefinn93/BuildbotStatusShields",
