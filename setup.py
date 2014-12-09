@@ -3,8 +3,15 @@ import os
 from setuptools import setup
 
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+def readme(fname):
+    md = open(os.path.join(os.path.dirname(__file__), fname)).read()
+    output = md
+    try:
+        import pypandoc
+        output = pypandoc.convert(md, 'rst', format='md')
+    except ImportError:
+        pass
+    return output
 
 setup(
     name="BuildbotStatusShields",
@@ -16,7 +23,7 @@ setup(
     keywords = "shields badges status buildbot",
     url = "https://github.com/thefinn93/BuildbotStatusShields",
     packages=['BuildbotStatusShields'],
-    long_description=read('README.md'),
+    long_description=readme('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha"
     ],
