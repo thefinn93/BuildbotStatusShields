@@ -35,8 +35,31 @@ class ShieldStatusResource(resource.Resource):
     isLeaf = True
     webstatus = None
 
-    def __init__(self, webstatus):
+    leftText = None
+    leftColor = None
+    templatePath = None
+    fontFace = None
+    fontSize = None
+    colorScheme = {
+        "exception": "#007ec6",  # blue
+        "failure": "#e05d44",    # red
+        "retry": "#007ec6",      # blue
+        "skipped": "a4a61d",     # yellowgreen
+        "success": "#4c1",       # brightgreen
+        "unknown": "#9f9f9f",    # lightgrey
+        "warnings": "#dfb317"    # yellow
+    }
+
+    def __init__(self, webstatus, leftText="Build Status", leftColor="#555",
+                 templatePath="templates/badge.svg.j2", fontFace="DejaVu Sans",
+                 fontSize=11, colorScheme=colorScheme):
         self.webstatus = webstatus
+        self.leftText = leftText
+        self.leftColor = leftColor
+        self.templatePath = templatePath
+        self.fontFace = fontFace
+        self.fontSize = fontSize
+        self.colorScheme = colorScheme
 
     def getChild(self, name, request):
         """Just return itself
@@ -89,13 +112,18 @@ class ShieldStatusResource(resource.Resource):
 
         builder = request.args.get('builder', [None])[0]
 
-        svgdata = self.makesvg("Error")
+        svgdata = self.makesvg("Unknown", leftText="Image Error")
         if builder is not None and builder in status.getBuilderNames():
             # get the last build result from this builder
             build = status.getBuilder(builder).getBuild(b)
             if build is not None:
                 result = build.getResults()
-                svgdata = self.makesvg(results.Results[result])
+                svgdata = self.makesvg(results.Results[result],
+                                       results.Results[result])
+            else:
+                svgdata = self.makesvg("No builds", leftText="Image Error")
+        else:
+            svgdata = self.makesvg("Invalid builder", leftText="Image Error")
 
         data['image'] = str(svgdata)
         if filetype == "png":
@@ -103,26 +131,34 @@ class ShieldStatusResource(resource.Resource):
 
         return data
 
-    def textwidth(self, text, fontsize=14):
+    def textwidth(self, text):
         surface = cairo.SVGSurface(None, 1280, 200)
         cr = cairo.Context(surface)
-        cr.select_font_face('DejaVu Sans',
+        cr.select_font_face(self.fontFace,
                             cairo.FONT_SLANT_NORMAL,
                             cairo.FONT_WEIGHT_BOLD)
-        cr.set_font_size(fontsize)
+        cr.set_font_size(self.fontSize)
         return cr.text_extents(text)[2]
 
-    def makesvg(self, righttext, rightcolor="#4c1", lefttext="Build Status",
-                leftcolor="#555", style="plastic"):
-        template = Template(open("templates/%s-template.svg" % style).read())
+    def makesvg(self, righttext, status=None, leftText=None, leftColor=None):
+        rightColor = "#9f9f9f"  # Grey
+        if status in self.colorScheme:
+            rightColor = self.colorScheme[status]
+
+        if leftText is None:
+            leftText = self.leftText
+        if leftColor is None:
+            leftColor = self.leftColor
+
+        template = Template(open(self.templatePath).read())
         left = {
-            "color": leftcolor,
-            "text": lefttext,
-            "width": self.textwidth(lefttext, 11)
+            "color": leftColor,
+            "text": leftText,
+            "width": self.textwidth(self.leftText)
         }
         right = {
-            "color": rightcolor,
+            "color": rightColor,
             "text": righttext,
-            "width": self.textwidth(righttext, 11)
+            "width": self.textwidth(righttext)
         }
         return template.render(left=left, right=right)
