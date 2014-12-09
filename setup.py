@@ -20,5 +20,9 @@ setup(
     classifiers=[
         "Development Status :: 3 - Alpha"
     ],
-    install_requires=['CairoSVG', 'cairocffi', 'Jinja2']
+    install_requires=['CairoSVG', 'cairocffi', 'Jinja2'],
+    package_data={
+        'BuildbotStatusShields': ['templates/*.svg.j2']
+    },
+    include_package_data = True
 )
