@@ -38,7 +38,7 @@ class ShieldStatusResource(resource.Resource):
     defaults = {
         "left_text": "Build Status",
         "left_color": "#555",
-        "template_name": "badge.svg.s2",
+        "template_name": "badge.svg.j2",
         "font_face": "DejaVu Sans",
         "font_size": 11,
         "color_scheme": {
@@ -56,7 +56,7 @@ class ShieldStatusResource(resource.Resource):
     templateName = None
     fontFace = None
     fontSize = None
-    colorScheme = defaults['colorScheme']
+    colorScheme = defaults['color_scheme']
 
     env = jinja2.Environment(loader=jinja2.ChoiceLoader([
         jinja2.PackageLoader('BuildbotStatusShields'),
