@@ -38,7 +38,7 @@ class ShieldStatusResource(resource.Resource):
     defaults = {
         "left_text": "Build Status",
         "left_color": "#555",
-        "template_name": "badge.svg.s2",
+        "template_name": "badge.svg.j2",
         "font_face": "DejaVu Sans",
         "font_size": 11,
         "color_scheme": {
@@ -56,7 +56,7 @@ class ShieldStatusResource(resource.Resource):
     templateName = None
     fontFace = None
     fontSize = None
-    colorScheme = defaults['colorScheme']
+    colorScheme = defaults['color_scheme']
 
     env = jinja2.Environment(loader=jinja2.ChoiceLoader([
         jinja2.PackageLoader('BuildbotStatusShields'),
@@ -110,6 +110,9 @@ class ShieldStatusResource(resource.Resource):
         # build number
         build_number = int(request.args.get('number', [-1])[0])
 
+		# branch
+        branch = request.args.get('branch', [None])[0]
+
         filetype = request.path.split(".")[-1].lower()
         mimetypes = {
             "svg": "image/svg+xml",
@@ -122,18 +125,30 @@ class ShieldStatusResource(resource.Resource):
                 'image': None,
                 'content_type': mimetypes[filetype]}
 
-        builder = request.args.get('builder', [None])[0]
+        builder_name= request.args.get('builder', [None])[0]
 
         svgdata = self.makesvg("Unknown", left_text="Image Error")
-        if builder is not None and builder in status.getBuilderNames():
-            # get the last build result from this builder
-            build = status.getBuilder(builder).getBuild(build_number)
-            if build is not None:
-                result = build.getResults()
-                svgdata = self.makesvg(results.Results[result],
-                                       results.Results[result])
-            else:
-                svgdata = self.makesvg("No builds", left_text="Image Error")
+        if builder_name is not None and builder_name in status.getBuilderNames():
+			builder = status.getBuilder(builder_name)
+			#get the last build from this branch:
+			if branch:
+				number = builder.nextBuildNumber - 1
+				while number > 0:
+					build = builder.getBuildByNumber(number)
+					if branch in [ss.branch for ss in build.getSourceStamps()]:
+						break
+					number -= 1
+				if number > 0:
+					build_number = number
+		 	if not branch or build_number > 0:
+				# get the last build result from this builder
+				build = builder.getBuild(build_number)
+				if build is not None:
+					result = build.getResults()
+					svgdata = self.makesvg(results.Results[result],
+							   results.Results[result], left_text=self.left_text + ": " + branch)
+				else:
+					svgdata = self.makesvg("No builds", left_text="Image Error")
         else:
             svgdata = self.makesvg("Invalid builder", left_text="Image Error")
 
