@@ -110,8 +110,8 @@ class ShieldStatusResource(resource.Resource):
         # build number
         build_number = int(request.args.get('number', [-1])[0])
 
-		# branch
-        branch = request.args.get('branch', [None])[0]
+        # branch
+        branch = request.args.get('branch', [''])[0]
 
         filetype = request.path.split(".")[-1].lower()
         mimetypes = {
